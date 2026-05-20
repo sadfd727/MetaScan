@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaScan - 离线模式</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+            background:linear-gradient(135deg,#059669,#10b981);
+            color:#fff;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            padding:24px;
+        }
+        .offline-card{
+            background:rgba(255,255,255,0.12);
+            backdrop-filter:blur(16px);
+            border-radius:24px;
+            padding:48px 40px;
+            max-width:420px;
+            width:100%;
+            border:1px solid rgba(255,255,255,0.18);
+            box-shadow:0 8px 32px rgba(0,0,0,0.2);
+        }
+        .icon{font-size:72px;margin-bottom:24px;display:block}
+        h1{font-size:28px;font-weight:700;margin-bottom:12px;letter-spacing:-0.5px}
+        p{font-size:16px;opacity:0.85;line-height:1.6;margin-bottom:8px}
+        .sub{font-size:14px;opacity:0.65}
+        .actions{margin-top:32px;display:flex;flex-direction:column;gap:12px}
+        .btn{
+            display:inline-block;
+            padding:14px 28px;
+            border-radius:12px;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+            text-decoration:none;
+            border:none;
+            transition:all 0.2s;
+        }
+        .btn-primary{
+            background:#fff;
+            color:#059669;
+        }
+        .btn-primary:hover{background:#f0fdf4;transform:translateY(-1px)}
+        .btn-secondary{
+            background:rgba(255,255,255,0.15);
+            color:#fff;
+            border:1px solid rgba(255,255,255,0.3);
+        }
+        .btn-secondary:hover{background:rgba(255,255,255,0.25)}
+        .features{
+            margin-top:32px;
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            text-align:left;
+            font-size:13px;
+            opacity:0.7;
+        }
+        .features span{padding-left:16px;position:relative}
+        .features span::before{content:'✓';position:absolute;left:0;font-weight:700}
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <span class="icon">📡</span>
+        <h1>您当前处于离线状态</h1>
+        <p>无法连接到网络，部分功能可能受限。</p>
+        <p>已缓存的数据仍可访问，新的操作将在恢复网络后自动同步。</p>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="location.reload()">重新连接</button>
+            <a class="btn btn-secondary" href="/index.html">查看已缓存内容</a>
+        </div>
+        <div class="features">
+            <span>已缓存页面</span>
+            <span>风险报告查看</span>
+            <span>离线数据输入</span>
+            <span>自动同步</span>
+        </div>
+    </div>
+</body>
+</html>
