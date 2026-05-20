@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#059669" />
+  <meta name="description" content="代谢指纹驱动的健康管理平台 — 多维度代谢指标分析、AI智能诊断" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MetaScan" />
+  <title>MetaScan 智能健康管理平台</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚕</text></svg>" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #1a2980;
+      --accent: #26d0ce;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+    }
+
+    #app { display: none; }
+
+    #app.visible { display: block; }
+
+    #vue-root { min-height: 100vh; }
+
+    #vue-root.vue-hidden { display: none; }
+
+    #app-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .legacy-tab-content {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    #legacyNav {
+      max-width: 1400px;
+      margin: 0 auto 20px;
+      padding: 0 20px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #legacyNav .nav-btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: var(--card-bg);
+      color: var(--text-secondary);
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    #legacyNav .nav-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    #legacyNav .nav-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+    }
+
+    #legacyUserInfo {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+
+    #legacyUserInfo button {
+      padding: 8px 16px;
+      border: 2px solid var(--danger);
+      background: transparent;
+      color: var(--danger);
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    #legacyUserInfo button:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      max-width: 520px;
+      width: 90vw;
+    }
+
+    .toast {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      z-index: 99999;
+      animation: toastIn 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      max-width: 400px;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(100px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .toast-success { background: #ecfdf5; color: #065f46; border-left: 4px solid #10b981; }
+    .toast-error { background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; }
+    .toast-warning { background: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; }
+    .toast-info { background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; }
+
+    @media (max-width: 768px) {
+      #legacyNav { flex-wrap: wrap; }
+      #legacyUserInfo { margin-left: 0; width: 100%; justify-content: flex-end; }
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/main-CM69SMfS.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vue-vendor-HJYRZGBZ.js">
+  <link rel="stylesheet" crossorigin href="/assets/main-CED7Pfp8.css">
+</head>
+<body>
+
+  <div id="vue-root"></div>
+  <div id="app"></div>
+
+  <script src="app.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      var app = document.getElementById('app');
+      var vueRoot = document.getElementById('vue-root');
+
+      if (typeof window.__VUE_BRIDGE__ !== 'undefined' && window.__VUE_BRIDGE__) return;
+
+      window.__VUE_BRIDGE__ = true;
+
+      window._vueBridge = {
+        showLegacyUI: function(user) {
+          if (vueRoot) vueRoot.classList.add('vue-hidden');
+          if (app) {
+            app.classList.add('visible');
+
+            var nav = document.createElement('nav');
+            nav.id = 'legacyNav';
+            var tabs = [
+              { key: 'data', label: '📊 数据录入', vue: true },
+              { key: 'home', label: '🏠 首页' },
+              { key: 'reports', label: '📋 健康报告' },
+              { key: 'chat', label: '💬 消息' },
+              { key: 'comparison', label: '📈 历史对比' },
+              { key: 'profile', label: '👤 个人中心' }
+            ];
+
+            if (user.role === 'doctor') {
+              tabs.splice(2, 0, { key: 'doctor', label: '🩺 患者管理' });
+            }
+
+            tabs.forEach(function(t) {
+              var btn = document.createElement('button');
+              btn.className = 'nav-btn';
+              btn.textContent = t.label;
+              btn.setAttribute('data-tab-key', t.key);
+              btn.onclick = function() {
+                if (t.vue) {
+                  showVueWizard();
+                  return;
+                }
+                switchToLegacyTab(t.key);
+              };
+              nav.appendChild(btn);
+            });
+
+            function switchToLegacyTab(tabKey) {
+              if (app) app.classList.add('visible');
+              if (vueRoot) vueRoot.classList.add('vue-hidden');
+              nav.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+              var targetBtn = nav.querySelector('[data-tab-key="' + tabKey + '"]');
+              if (targetBtn) targetBtn.classList.add('active');
+              if (typeof window.showTab === 'function') {
+                setTimeout(function() { window.showTab(tabKey); }, 50);
+              }
+            }
+
+            app.innerHTML = '';
+            app.appendChild(nav);
+
+            var content = document.createElement('div');
+            content.id = 'app-inner';
+            content.innerHTML = '<div id="tabContentContainer" class="legacy-tab-content"><p style="text-align:center;padding:60px 20px;color:var(--text-secondary);">正在加载...</p></div>';
+            app.appendChild(content);
+
+            function showVueWizard() {
+              if (app) app.classList.remove('visible');
+              if (vueRoot) vueRoot.classList.remove('vue-hidden');
+              nav.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+              var dataBtn = nav.querySelector('[data-tab-key="data"]');
+              if (dataBtn) dataBtn.classList.add('active');
+              var vRouter = window.__VUE_ROUTER__;
+              if (vRouter) {
+                vRouter.push('/').catch(function() {});
+              } else {
+                window.location.hash = '#/';
+              }
+            }
+
+            window.__switchToLegacyTab = switchToLegacyTab;
+
+            setTimeout(function() {
+              showVueWizard();
+              if (typeof window.startChatPolling === 'function') window.startChatPolling();
+              if (typeof window.startNotificationCheck === 'function') window.startNotificationCheck();
+            }, 300);
+
+            if (typeof window.checkSharedReportOnLoad === 'function') window.checkSharedReportOnLoad();
+          }
+        }
+      };
+    })();
+  </script>
+
+  <script>
+    window._legacyFeedback = {
+      success: console.log.bind(console, '[Success]'),
+      error: console.error.bind(console, '[Error]'),
+      warning: console.warn.bind(console, '[Warning]'),
+      info: console.info.bind(console, '[Info]')
+    };
+    window.FeedbackSystem = window.FeedbackSystem || window._legacyFeedback;
+  </script>
+
+  <script>
+    window.clearAllMetascanAccounts = function() {
+      var count = 0;
+      var keysToRemove = [];
+
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && key.indexOf('metascan') === 0) {
+          keysToRemove.push(key);
+        }
+      }
+
+      for (var j = 0; j < keysToRemove.length; j++) {
+        localStorage.removeItem(keysToRemove[j]);
+        count++;
+      }
+
+      var sessionKeys = [];
+      for (var k = 0; k < sessionStorage.length; k++) {
+        var sk = sessionStorage.key(k);
+        if (sk && sk.indexOf('metascan') === 0) {
+          sessionKeys.push(sk);
+        }
+      }
+      for (var m = 0; m < sessionKeys.length; m++) {
+        sessionStorage.removeItem(sessionKeys[m]);
+        count++;
+      }
+
+      if (count > 0) {
+        console.log('[账户清理] 已清除 ' + count + ' 条本地存储数据，请刷新页面');
+        window.location.reload();
+      } else {
+        alert('未找到可清除的 metascan 数据');
+      }
+    };
+
+    console.log('[账户清理] 工具已就绪，在控制台执行 clearAllMetascanAccounts() 即可清除所有本地存储账号');
+
+    (function() {
+      if (window.location.search.indexOf('clear') !== -1) {
+        window.clearAllMetascanAccounts();
+      }
+    })();
+  </script>
+
+
+  <script>
+    (function() {
+      if (!('serviceWorker' in navigator)) return;
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function(reg) {
+        console.log('[PWA] ServiceWorker 注册成功:', reg.scope);
+        reg.addEventListener('updatefound', function() {
+          var newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener('statechange', function() {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              if (confirm('检测到新版本，是否立即刷新？')) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                window.location.reload();
+              }
+            }
+          });
+        });
+      }).catch(function(err) {
+        console.warn('[PWA] ServiceWorker 注册失败:', err.message);
+      });
+    })();
+  </script>
+
+</body>
+</html>
