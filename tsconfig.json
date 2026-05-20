@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": false,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src-vue/*"]
+    },
+    "ignoreDeprecations": "6.0",
+    "types": ["vue"]
+  },
+  "include": [
+    "src-vue/**/*.ts",
+    "src-vue/**/*.d.ts",
+    "src-vue/**/*.vue",
+    "env.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "uploads"]
+}
